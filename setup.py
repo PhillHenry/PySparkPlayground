@@ -1,3 +1,4 @@
+import setuptools
 from distutils.core import setup
 
 def readme():
@@ -18,4 +19,5 @@ setup(
     license='LICENSE.txt',
     description='Me playing around with PySpark.',
     long_description=readme(),
+    setup_requires=['wheel']
 )

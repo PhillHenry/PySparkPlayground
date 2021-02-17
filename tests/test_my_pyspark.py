@@ -6,6 +6,7 @@ from pyspark.context import SparkContext
 from pyspark.conf import SparkConf
 import myspark.pi as to_test
 
+
 def quiet_py4j():
     """Suppress spark logging for the test context."""
     logger = logging.getLogger('py4j')
