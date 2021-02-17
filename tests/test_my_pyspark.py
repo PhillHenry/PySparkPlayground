@@ -2,6 +2,9 @@ import logging
 
 import pytest
 from pyspark.sql import SparkSession
+from pyspark.context import SparkContext
+from pyspark.conf import SparkConf
+import myspark.pi as to_test
 
 def quiet_py4j():
     """Suppress spark logging for the test context."""
@@ -26,5 +29,19 @@ def spark_session(request):
     return spark
 
 
-def test_my_app(spark_session):
-    print("hello, world")
+@pytest.fixture(scope="session")
+def spark_context(request):
+    """ fixture for creating a spark context
+    Args:
+        request: pytest.FixtureRequest object
+    """
+    conf = (SparkConf().setMaster("local[2]").setAppName("pytest-pyspark-local-testing"))
+    sc = SparkContext(conf=conf)
+    request.addfinalizer(lambda: sc.stop())
+
+    quiet_py4j()
+    return sc
+
+
+def test_my_app(spark_context):
+    to_test.calculate_pi(spark_context)
