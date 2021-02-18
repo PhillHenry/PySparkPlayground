@@ -11,3 +11,4 @@ def calculate_pi(sc):
     count = sc.parallelize(range(0, NUM_SAMPLES)).filter(inside).count()
     pi = 4 * count / NUM_SAMPLES
     print("Pi is roughly ", pi)
+    return pi

@@ -45,4 +45,5 @@ def spark_context(request):
 
 
 def test_my_app(spark_context):
-    to_test.calculate_pi(spark_context)
+    pi = to_test.calculate_pi(spark_context)
+    assert pi == pytest.approx(3.14, 0.01)
