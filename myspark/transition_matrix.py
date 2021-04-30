@@ -25,6 +25,7 @@ IN_PATIENT = "inpatient"
 OUT_PATIENT = "outpatient"
 THEATRE = "theatre"
 DIAGNOSTICS = "diagnostics"
+PATH = "paths"
 
 
 def index_state(df):
@@ -39,17 +40,25 @@ def pairs(xs) -> list:
     tuples = []
     for i in range(1, len(xs)):
         current = xs[i]
-        tuples.append([last, current])
+        tuples.append(tuple([last, current]))
         last = current
     return tuples
 
 
-def to_transition_matrix(df) -> Dataset:
+def add_paths(df) -> Dataset:
     df = index_state(df)
     user_window = Window().partitionBy(USER_ID)
     w = user_window.orderBy(F.col(EVENT_TIME).asc())
-    df = df.withColumn("path", F.collect_list(STATE_INDEX).over(w))
+    df = df.withColumn(PATH, F.collect_list(STATE_INDEX).over(w))
     last_date_col = "last_date"
     df = df.withColumn(last_date_col, F.max(EVENT_TIME).over(user_window))
     df = df.where(df[EVENT_TIME] == df[last_date_col])
     return df
+
+
+def to_transitions(df) -> Dataset:
+    PAIRS = "pairs"
+    udf = F.udf(pairs, returnType=ArrayType(ArrayType(FloatType())))
+    df = df.withColumn(PAIRS, udf(PATH))
+    return df.select(F.explode(F.col(PAIRS)))
+
