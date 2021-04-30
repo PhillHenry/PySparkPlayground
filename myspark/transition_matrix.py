@@ -32,6 +32,18 @@ def index_state(df):
     return indexer.fit(df).transform(df)
 
 
+def pairs(xs) -> list:
+    if len(xs) < 2:
+        return []
+    last = xs[0]
+    tuples = []
+    for i in range(1, len(xs)):
+        current = xs[i]
+        tuples.append([last, current])
+        last = current
+    return tuples
+
+
 def to_transition_matrix(df) -> Dataset:
     df = index_state(df)
     user_window = Window().partitionBy(USER_ID)
