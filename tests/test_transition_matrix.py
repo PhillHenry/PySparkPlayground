@@ -28,5 +28,5 @@ def test_my_app(spark_context, spark_session):
 
     output = t.to_transition_matrix(df)
     output.show()
-    assert output.count() == 2 # patients
+    assert output.count() == 2  # patients
 
